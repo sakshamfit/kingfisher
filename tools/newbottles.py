@@ -35,7 +35,10 @@ from cutout import cutout          # noqa: E402
 from rebrand import DECK, ROOT, compose  # noqa: E402
 from wordmark import render_word   # noqa: E402
 
-RAW = "/home/user/bottles-src"
+# Kept inside the repo rather than a workspace path outside it: the renders
+# are pipeline input and need to survive with the rest of the repo, which a
+# scratch directory elsewhere in the sandbox does not.
+RAW = os.path.join(ROOT, "bottles-src")
 LABELS = os.path.join(ROOT, "build", "labels")
 ASSETS = os.path.join(ROOT, "dist", "assets")
 
