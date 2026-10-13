@@ -1,0 +1,7 @@
+# Python bytecode from the build/verification scripts.
+__pycache__/
+*.pyc
+
+# Kept as a template, not at .github/workflows/: this repo is pushed by a
+# GitHub App without the `workflows` permission, which rejects any push that
+# creates or updates a file under .github/workflows/. See README.
