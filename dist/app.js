@@ -60,7 +60,7 @@
   function showProduct(id) {
     const p = productById(id);
     if (!p) return;
-    openDialog(`<div class="detail-layout"><div class="detail-art" data-hi="${p.hi}">${bottle(p)}</div><div class="detail-copy"><span class="eyebrow">THE MAGIC MOMENTS FAMILY</span><h2 class="display">${p.name}.</h2><p>${p.description}</p><div class="detail-meta"><div><small>STYLE</small><strong>${p.style}</strong></div><div><small>CHARACTER</small><strong>${p.character}</strong></div></div><p class="detail-fine">Availability, pack design and alcohol content vary by region. Check the local product label. This is a brand showcase; products cannot be purchased here.</p><button class="button dark" data-back-range>Back to the family <span>↗</span></button></div></div>`);
+    openDialog(`<div class="detail-layout"><div class="detail-art" data-hi="${p.hi}">${bottle(p)}</div><div class="detail-copy"><span class="eyebrow">THE SAKSHAM MOMENTS FAMILY</span><h2 class="display">${p.name}.</h2><p>${p.description}</p><div class="detail-meta"><div><small>STYLE</small><strong>${p.style}</strong></div><div><small>CHARACTER</small><strong>${p.character}</strong></div></div><p class="detail-fine">Availability, pack design and alcohol content vary by region. Check the local product label. This is a brand showcase; products cannot be purchased here.</p><button class="button dark" data-back-range>Back to the family <span>↗</span></button></div></div>`);
     $('[data-back-range]', modal).addEventListener('click', closeDialog);
   }
   $$('.product').forEach(el => el.addEventListener('click', () => showProduct(el.dataset.product)));

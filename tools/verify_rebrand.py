@@ -22,6 +22,9 @@ import numpy as np
 from PIL import Image
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# The rebrand's previous working name, matched whatever the casing.
+STALE_BRAND = re.compile(r"magic\s+moments", re.I)
 DIST = os.path.join(ROOT, "dist")
 ASSETS = os.path.join(DIST, "assets")
 
@@ -156,16 +159,22 @@ console.log(JSON.stringify(arr.map(p=>({id:p.id,size:p.size,box:p.box,file:p.fil
     # R3 follow-up: the brand is "Saksham Moments" everywhere in the copy, so the
     # previous working name must not survive in the prose, the products array or
     # the generated snippet they are pasted from.
+    # Matched case-insensitively: the eyebrow in the product dialog is set in
+    # caps, so a plain "Magic Moments" count sails straight past an uppercase
+    # "THE MAGIC MOMENTS FAMILY". Only the spelled-out phrase is flagged; the
+    # credits block links to sipdirect.com/products/magic-moments-… on purpose,
+    # and those hyphenated URLs are real external links.
     for name, text in (("index.html", html), ("app.js", app)):
-        n = text.count("Magic Moments")
+        n = len(STALE_BRAND.findall(text))
         check(n == 0, f"{name}: brand reads Saksham Moments, no Magic Moments left ({n} found)")
     check(app.count("Saksham Moments") >= 8,
           f"app.js: Saksham Moments present in the copy ({app.count('Saksham Moments')} refs)")
     snippet = os.path.join(ROOT, "build", "products.snippet.js")
     if os.path.exists(snippet):
         s_text = open(snippet, encoding="utf-8").read()
-        check("Magic Moments" not in s_text,
-              "build/products.snippet.js regenerated without the old brand name")
+        n = len(STALE_BRAND.findall(s_text))
+        check(n == 0,
+              f"build/products.snippet.js regenerated without the old brand name ({n} found)")
 
     # ---- 5. copy landed ----------------------------------------------------
     print("\n5. rebranded copy present")

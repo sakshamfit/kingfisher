@@ -168,7 +168,7 @@ def patch_app_js(text: str) -> str:
         "hero fly-in target")
 
     # Product-detail dialog eyebrow + remaining beer wording in user-visible copy.
-    text = sub_once(text, '>THE KINGFISHER FAMILY<', '>THE MAGIC MOMENTS FAMILY<',
+    text = sub_once(text, '>THE KINGFISHER FAMILY<', '>THE SAKSHAM MOMENTS FAMILY<',
                     "detail eyebrow")
     text = sub_once(text, '>See this beer <span>', '>See this bottle <span>', "station cta")
     text = sub_once(text, 'Fill the beer up to the line before you serve.',
@@ -179,11 +179,22 @@ def patch_app_js(text: str) -> str:
 
 
 def report_leftovers(text: str, name: str) -> None:
-    """Case-insensitive sweep - 'THE KINGFISHER FAMILY' style misses are caught here."""
-    hits = [m for m in re.finditer("kingfisher", text, re.I)]
-    print(f"  {name}: {len(hits)} 'kingfisher' occurrence(s) remaining (case-insensitive)")
-    for m in hits:
-        print(f"    ...{text[max(0, m.start() - 60):m.start() + 60]}...".replace("\n", " "))
+    """Case-insensitive sweeps - 'THE KINGFISHER FAMILY' style misses are caught here.
+
+    The second sweep covers this rebrand's *previous* working name. An earlier
+    pass rewrote the beer family line as far as 'Magic Moments' and stopped,
+    which shipped an uppercase 'THE MAGIC MOMENTS FAMILY' eyebrow in the product
+    dialog: a case-sensitive count nowhere near it would notice. Only the
+    spelled-out phrase is swept, so the credits links to
+    sipdirect.com/products/magic-moments-... stay untouched.
+    """
+    sweeps = ((re.compile("kingfisher", re.I), "kingfisher"),
+              (re.compile(r"magic\s+moments", re.I), "the previous working name"))
+    for pattern, label in sweeps:
+        hits = list(pattern.finditer(text))
+        print(f"  {name}: {len(hits)} '{label}' occurrence(s) remaining (case-insensitive)")
+        for m in hits:
+            print(f"    ...{text[max(0, m.start() - 60):m.start() + 60]}...".replace("\n", " "))
 
 
 def patch_index_html(text: str) -> str:
