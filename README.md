@@ -150,6 +150,32 @@ the DOM check. The site itself needs none of them.
 `.openai/hosting.json` points at `dist/`, which is committed, so the site
 deploys as-is.
 
+The Vercel project connected to this repository is pinned by `vercel.json` at
+the repo root:
+
+```json
+{
+  "framework": null,
+  "buildCommand": null,
+  "installCommand": null,
+  "outputDirectory": "dist"
+}
+```
+
+That file is not optional here. There is no `package.json` and no framework, so
+zero-config detection falls back to **“Other”** and serves `public/`, or the
+**repository root** if `public/` is absent — and the repo root has no
+`index.html`, so every route on the deployment returned `404 NOT_FOUND` even
+though the build itself reported success. `outputDirectory: dist` makes `dist/`
+the web root instead, which is what the page's relative asset paths
+(`styles.css`, `app.js`, `assets/…`) expect.
+
+If the deployment still 404s after this file lands, check **Settings → Build and
+Deployment → Root Directory**: it must be the repository root (empty), because a
+subdirectory root stops Vercel from reading `vercel.json` at all. The dashboard's
+**Output Directory** should read `dist` as well; `vercel.json` takes precedence
+over it when both are set.
+
 `deploy/pages.workflow.yml` is a GitHub Pages workflow. It lives there rather
 than at `.github/workflows/` because this repository is pushed by a GitHub App
 that lacks the `workflows` permission, and GitHub rejects any push that creates
@@ -178,6 +204,7 @@ bottles-src/       generated bottle renders (optional stage 4 input)
 build/labels/      pristine label artwork, the source for stage 4
 build/original-app.js   pristine upstream app.js, the geometry baseline
 deploy/            GitHub Pages workflow template
+vercel.json        Vercel config - serves dist/ as the web root
 ```
 
 `dist/` and `build/` are committed deliberately: some sandboxed environments
